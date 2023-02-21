@@ -1,0 +1,38 @@
+name: Tests - doorcloud backend
+
+on: [push]
+
+jobs:
+  test:
+    environment: Test
+    name: Testing doorcloud backend
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Git repository
+        uses: actions/checkout@v3
+        with:
+          fetch-depth: 0
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 16.x
+
+      - name: Install pnpm
+        run: corepack enable
+
+      - name: Install Node.js dependencies
+        run: pnpm i
+
+      - name: Revert changes into the pnpm-lock.yaml file
+        run: git checkout -- pnpm-lock.yaml
+
+      - name: Run test
+        run: pnpm test:ci
+        env:
+          MQTT_USER: ${{ secrets.MQTT_USER }}
+          MQTT_PASS: ${{ secrets.MQTT_PASS }}
+          MQTT_HOST: ${{ secrets.MQTT_HOST }}
+          MQTT_PORT: ${{ secrets.MQTT_PORT }}
+          NODE_ENV: ci

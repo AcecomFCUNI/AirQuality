@@ -1,0 +1,67 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Client {
+  id       String @id
+  name     String @db.VarChar(255)
+  lastName String @db.VarChar(255)
+  email    String @unique @db.VarChar(255)
+
+  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  Modules Module[]
+
+  @@map("clients")
+}
+
+model Module {
+  id     Int    @id @default(autoincrement())
+  userId String @db.VarChar(255)
+  name   String @db.VarChar(255)
+
+  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  Client  Client   @relation(fields: [userId], references: [id])
+  Sensors Sensor[]
+
+  @@map("modules")
+}
+
+model Sensor {
+  id       Int @id @default(autoincrement())
+  moduleId Int
+
+  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  Module     Module       @relation(fields: [moduleId], references: [id])
+  SensorData SensorData[]
+
+  @@map("sensors")
+}
+
+model SensorData {
+  id          Int   @id @default(autoincrement())
+  sensorId    Int
+  temperature Float
+  pH          Float
+  tds         Float
+  turbidity   Float
+
+  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+
+  Sensor Sensor @relation(fields: [sensorId], references: [id])
+
+  @@map("sensorData")
+}
