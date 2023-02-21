@@ -54,10 +54,10 @@ model Sensor {
 model SensorData {
   id          Int   @id @default(autoincrement())
   sensorId    Int
+  aq          Float
+  h2s         Float
+  humidity    Float
   temperature Float
-  pH          Float
-  tds         Float
-  turbidity   Float
 
   createdAt DateTime? @default(now()) @db.Timestamptz(6)
 

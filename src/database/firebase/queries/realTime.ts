@@ -4,10 +4,10 @@ import { z } from 'zod'
 
 const clientData = z.object({
   date: z.string(),
-  pH: z.number(),
-  tds: z.number(),
-  temperature: z.number(),
-  turbidity: z.number()
+  aq: z.number(),
+  h2s: z.number(),
+  humidity: z.number(),
+  temperature: z.number()
 })
 
 declare global {
@@ -37,19 +37,19 @@ const updateDate = ({ db, id, moduleId, sensorId, value }: Update<string>) => {
   db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).set(value)
 }
 
-const updatePH = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/pH`).set(value)
+const updateAQ = ({ db, id, moduleId, sensorId, value }: Update) => {
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/aq`).set(value)
 }
 
-const updateTDS = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/tds`).set(value)
+const updateH2S = ({ db, id, moduleId, sensorId, value }: Update) => {
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/h2s`).set(value)
 }
 
-const updateTemperature = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/temperature`).set(value)
+const updateHumidity = ({ db, id, moduleId, sensorId, value }: Update) => {
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/humidity`).set(value)
 }
 
-const updateTurbidity = ({
+const updateTemperature = ({
   db,
   id,
   moduleId,
@@ -57,14 +57,13 @@ const updateTurbidity = ({
   value,
   date
 }: Update & { date: Date }) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/turbidity`).set(value, error => {
-    if (error) return console.error('Error on update turbidity', error)
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/temperature`).set(value, error => {
+    if (error) return console.error('Error on update temperature', error)
 
     updateDate({ db, id, moduleId, sensorId, value: date.toISOString() })
   })
 }
 
-// TODO: modify this function to update the sensorData in the postgreSQL database
 const listenChangesInDate = ({
   db,
   id,
@@ -83,11 +82,11 @@ const listenChangesInDate = ({
 }
 
 export {
-  updatePH,
   getData,
-  updateTDS,
+  updateAQ,
+  updateH2S,
+  updateHumidity,
   updateTemperature,
-  updateTurbidity,
   updateDate,
   listenChangesInDate
 }

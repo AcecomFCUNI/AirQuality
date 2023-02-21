@@ -12,7 +12,7 @@ const start = async () => {
   firebaseConnection(serverDebug, async () => {
     socketConnection(serverDebug).connect()
     startMqtt(serverDebug)
-    dbConnection().connect()
+    dbConnection(serverDebug).connect()
   })
 
   if (process.env.NODE_ENV !== 'production') {

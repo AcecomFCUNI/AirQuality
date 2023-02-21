@@ -1,11 +1,11 @@
 import debug from 'debug'
 import { MqttClient } from 'mqtt'
 
-import { updateTDS } from 'database'
-import { MAIN_TOPIC } from 'utils'
 import { socketConnection } from 'network/socket'
+import { updateAQ } from 'database'
+import { MAIN_TOPIC } from 'utils'
 
-const TOPIC = 'tds'
+const TOPIC = 'aq'
 const SUB_TOPIC = `${MAIN_TOPIC}/${TOPIC}`
 
 const sub = (client: MqttClient) => {
@@ -16,10 +16,6 @@ const sub = (client: MqttClient) => {
     if (!error) subDebug(`Subscribed to Topic: ${SUB_TOPIC}`)
   })
 
-  client.on('error', error => {
-    subDebug(`Topic: ${SUB_TOPIC} - Error:`, error)
-  })
-
   client.on('message', (topic, message) => {
     if (topic.includes(TOPIC)) {
       const [id, moduleId, sensorId, value] = message.toString().split('/')
@@ -27,17 +23,17 @@ const sub = (client: MqttClient) => {
       subDebug(`\nTopic: ${topic} - Message received`)
       subDebug(`Received a ${TOPIC} update at: ${new Date().toISOString()}`)
       subDebug(`Message: \t${message}\n`)
-      updateTDS({ db, moduleId, id, value: parseFloat(value), sensorId })
+      updateAQ({ db, moduleId, id, value: parseFloat(value), sensorId })
       socketConnection(subDebug)
         .connect()
-        .emit(`${sensorId}/tds`, parseFloat(value))
+        .emit(`${sensorId}/pH`, parseFloat(value))
     }
   })
 }
 
-const tds: Route = {
+const pH: Route = {
   sub,
   SUB_TOPIC
 }
 
-export { tds }
+export { pH }

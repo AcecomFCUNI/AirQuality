@@ -1,4 +1,5 @@
 import { PrismaClient } from '@prisma/client'
+import { Debugger } from 'debug'
 
 let dbConnected = false
 
@@ -7,7 +8,9 @@ declare global {
   var __postgresDb__: PrismaClient
 }
 
-const dbConnection = (): {
+const dbConnection = (
+  d?: Debugger
+): {
   connect: () => Promise<PrismaClient>
   disconnect: () => Promise<boolean>
 } => {
@@ -17,7 +20,7 @@ const dbConnection = (): {
         global.__postgresDb__ = new PrismaClient()
         await global.__postgresDb__.$connect()
         dbConnected = true
-        console.log('Postgres connection established.')
+        d?.('Postgres connection established.')
       }
 
       return global.__postgresDb__
@@ -26,7 +29,7 @@ const dbConnection = (): {
       if (global.__postgresDb__) {
         dbConnected = false
         await global.__postgresDb__.$disconnect()
-        console.log('Postgres connection closed.')
+        d?.('Postgres connection closed.')
       }
 
       return dbConnected
