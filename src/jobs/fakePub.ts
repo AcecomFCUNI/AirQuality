@@ -9,11 +9,6 @@ const clients = [
     id: '8e234a60-4b52-431a-8c33-98fac1bca3a9',
     moduleId: 1,
     sensorId: 1
-  },
-  {
-    id: 'ad532c60-00aa-4cea-af45-30c0af1a87e8',
-    moduleId: 2,
-    sensorId: 2
   }
 ]
 
