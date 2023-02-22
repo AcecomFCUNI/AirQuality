@@ -19,20 +19,21 @@ const sub = (client: MqttClient) => {
   client.on('message', (topic, message) => {
     if (topic.includes(TOPIC)) {
       const [id, moduleId, sensorId, value] = message.toString().split('/')
+      const floatValue = parseFloat(value)
+
+      if (floatValue === 0) return
 
       subDebug(`\nTopic: ${topic} - Message received`)
-      subDebug(`Received a ${TOPIC} update at: ${new Date().toISOString()}`)
+      subDebug(`Received a ${TOPIC.toUpperCase()} update at: ${new Date().toISOString()}`)
       subDebug(`Message: \t${message}\n`)
       updateH2S({
         db,
         id,
         moduleId,
-        value: parseFloat(value),
+        value: floatValue,
         sensorId
       })
-      socketConnection(subDebug)
-        .connect()
-        .emit(`${sensorId}/temperature`, parseFloat(value))
+      socketConnection(subDebug).connect().emit(`${sensorId}/h2s`, floatValue)
     }
   })
 }

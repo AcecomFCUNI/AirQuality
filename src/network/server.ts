@@ -11,8 +11,8 @@ const serverDebug = debug(namespace)
 const start = async () => {
   firebaseConnection(serverDebug, async () => {
     socketConnection(serverDebug).connect()
+    await dbConnection(serverDebug).connect()
     startMqtt(serverDebug)
-    dbConnection(serverDebug).connect()
   })
 
   if (process.env.NODE_ENV !== 'production') {

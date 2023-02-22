@@ -1,7 +1,7 @@
 import debug from 'debug'
 import { MqttClient } from 'mqtt'
 
-import { listenChangesInDate, updateTemperature } from 'database'
+import { updateTemperature } from 'database'
 import { MAIN_TOPIC } from 'utils'
 import { socketConnection } from 'network/socket'
 
@@ -11,7 +11,6 @@ const SUB_TOPIC = `${MAIN_TOPIC}/${TOPIC}`
 const sub = (client: MqttClient) => {
   const subDebug = debug(`${MAIN_TOPIC}:Mqtt:${TOPIC}:sub`)
   const db = global.__firebase__.database(process.env.FIREBASE_REAL_TIME_DB)
-  let subscribed = false
 
   client.subscribe(SUB_TOPIC, error => {
     if (!error) subDebug(`Subscribed to Topic: ${SUB_TOPIC}`)
@@ -20,30 +19,25 @@ const sub = (client: MqttClient) => {
   client.on('message', (topic, message) => {
     if (topic.includes(TOPIC)) {
       const [id, moduleId, sensorId, value] = message.toString().split('/')
-      const date = new Date()
+      const floatValue = parseFloat(value)
+
+      if (floatValue === 0) return
 
       subDebug(`\nTopic: ${topic} - Message received`)
-      subDebug(`Received a ${TOPIC} update at: ${new Date().toISOString()}`)
+      subDebug(
+        `Received a ${TOPIC.toUpperCase()} update at: ${new Date().toISOString()}`
+      )
       subDebug(`Message: \t${message}\n`)
       updateTemperature({
         db,
         id,
         moduleId,
-        value: parseFloat(value),
-        date,
+        value: floatValue,
         sensorId
       })
       socketConnection(subDebug)
         .connect()
-        .emit(`${sensorId}/turbidity`, {
-          value: parseFloat(value),
-          date: date.toISOString()
-        })
-
-      if (!subscribed) {
-        listenChangesInDate({ db, id, moduleId, sensorId })
-        subscribed = true
-      }
+        .emit(`${sensorId}/temperature`, floatValue)
     }
   })
 }

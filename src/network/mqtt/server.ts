@@ -10,15 +10,9 @@ const options: mqtt.IClientOptions = {
   port: process.env.MQTT_PORT ? parseInt(process.env.MQTT_PORT) : 0,
   host: process.env.MQTT_HOST,
   keepalive: 0,
-  ...(process.env.NODE_ENV === 'production'
-    ? {
-        protocol: 'mqtt'
-      }
-    : {
-        protocol: 'mqtts',
-        username: process.env.MQTT_USER,
-        password: process.env.MQTT_PASS
-      })
+  protocol: 'mqtts',
+  username: process.env.MQTT_USER,
+  password: process.env.MQTT_PASS
 }
 const connectedMessage = 'Connected to MQTT server.'
 const disconnectedMessage = 'Disconnected from MQTT server.'

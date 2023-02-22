@@ -27,10 +27,16 @@ const getData = async ({
   id,
   moduleId,
   sensorId
-}: Omit<Update, 'value'>): Promise<ClientData> => {
+}: Omit<Update, 'value'>) => {
   const result = await db.ref(`/ids/${id}/${moduleId}/${sensorId}`).get()
 
-  return clientData.parse(result.val())
+  try {
+    const value = clientData.parse(result.val())
+
+    return value
+  } catch (error) {
+    return null
+  }
 }
 
 const updateDate = ({ db, id, moduleId, sensorId, value }: Update<string>) => {
@@ -49,19 +55,8 @@ const updateHumidity = ({ db, id, moduleId, sensorId, value }: Update) => {
   db.ref(`/ids/${id}/${moduleId}/${sensorId}/humidity`).set(value)
 }
 
-const updateTemperature = ({
-  db,
-  id,
-  moduleId,
-  sensorId,
-  value,
-  date
-}: Update & { date: Date }) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/temperature`).set(value, error => {
-    if (error) return console.error('Error on update temperature', error)
-
-    updateDate({ db, id, moduleId, sensorId, value: date.toISOString() })
-  })
+const updateTemperature = ({ db, id, moduleId, sensorId, value }: Update) => {
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/temperature`).set(value)
 }
 
 const listenChangesInDate = ({
@@ -73,11 +68,13 @@ const listenChangesInDate = ({
   db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).on('value', async () => {
     const data = await getData({ db, id, moduleId, sensorId })
 
-    try {
-      await saveClientData(z.coerce.number().parse(sensorId), data)
-    } catch (error) {
-      console.error('Error: ', error)
-    }
+    if (data)
+      try {
+        await saveClientData(z.coerce.number().parse(sensorId), data)
+      } catch (error) {
+        console.error('Error: ', error)
+      }
+    else console.error('Error: No data found')
   })
 }
 
