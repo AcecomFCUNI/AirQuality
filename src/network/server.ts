@@ -15,12 +15,11 @@ const start = async () => {
     startMqtt(serverDebug)
   })
 
-  if (process.env.NODE_ENV !== 'production') {
-    const { updateData } = await import('../jobs')
+  const jobs = await import('../jobs')
 
-    updateData(getClient())
-    serverDebug(`Starting job: ${updateData.name}.`)
-  }
+  ;(Object.keys(jobs) as (keyof typeof jobs)[]).forEach(job => {
+    jobs[job](getClient(serverDebug))
+  })
 }
 
 export { start }

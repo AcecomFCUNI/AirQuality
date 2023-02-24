@@ -23,11 +23,11 @@ const sub = (client: MqttClient) => {
 
       if (floatValue === 0) return
 
-      subDebug(`\nTopic: ${topic} - Message received`)
+      subDebug(`Topic: ${topic} - Message received`)
       subDebug(
         `Received a ${TOPIC.toUpperCase()} update at: ${new Date().toISOString()}`
       )
-      subDebug(`Message: \t${message}\n`)
+      subDebug(`Message: \t${message}`)
       updateHumidity({ db, moduleId, id, value: floatValue, sensorId })
       socketConnection(subDebug)
         .connect()

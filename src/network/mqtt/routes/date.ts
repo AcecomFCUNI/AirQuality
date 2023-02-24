@@ -22,11 +22,11 @@ const sub = (client: MqttClient) => {
       const [id, moduleId, sensorId] = message.toString().split('/')
       const value = new Date().toISOString()
 
-      subDebug(`\nTopic: ${topic} - Message received`)
+      subDebug(`Topic: ${topic} - Message received`)
       subDebug(
         `Received a ${TOPIC.toUpperCase()} update at: ${new Date().toISOString()}`
       )
-      subDebug(`Message: \t${message}\n`)
+      subDebug(`Message: \t${message}`)
       updateDate({
         db,
         id,
