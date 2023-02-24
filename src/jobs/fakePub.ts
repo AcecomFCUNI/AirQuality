@@ -51,9 +51,7 @@ const updateData = (client: MqttClient) => {
   }
 
   cron.schedule('*/10 * * * * *', async (): Promise<void> => {
-    const isoTime = new Date().toISOString()
-
-    pubDebug(`Job started at: ${isoTime}`)
+    pubDebug(`Job started at: ${new Date().toISOString()}`)
 
     for (const { id, moduleId, sensorId } of clients) {
       const currentIsoTime = new Date().toISOString()

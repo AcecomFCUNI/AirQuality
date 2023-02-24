@@ -1,7 +1,11 @@
-import { saveClientData } from 'database/postgres'
 import { Database } from 'firebase-admin/lib/database/database.js'
 import { z } from 'zod'
+import debug from 'debug'
 
+import { saveClientData } from 'database'
+import { MAIN_TOPIC } from 'utils'
+
+const realTimeDebug = debug(`${MAIN_TOPIC}:Mqtt:FirebaseRealTime`)
 const clientData = z.object({
   date: z.string(),
   aq: z.number(),
@@ -40,23 +44,38 @@ const getData = async ({
 }
 
 const updateDate = ({ db, id, moduleId, sensorId, value }: Update<string>) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).set(value)
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).set(value, error => {
+    if (error) realTimeDebug(`Error: ${error}`)
+    else realTimeDebug('Date updated.')
+  })
 }
 
 const updateAQ = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/aq`).set(value)
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/aq`).set(value, error => {
+    if (error) realTimeDebug(`Error: ${error}`)
+    else realTimeDebug('AQ updated.')
+  })
 }
 
 const updateH2S = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/h2s`).set(value)
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/h2s`).set(value, error => {
+    if (error) realTimeDebug(`Error: ${error}`)
+    else realTimeDebug('H2S updated.')
+  })
 }
 
 const updateHumidity = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/humidity`).set(value)
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/humidity`).set(value, error => {
+    if (error) realTimeDebug(`Error: ${error}`)
+    else realTimeDebug('Humidity updated.')
+  })
 }
 
 const updateTemperature = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/temperature`).set(value)
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/temperature`).set(value, error => {
+    if (error) realTimeDebug(`Error: ${error}`)
+    else realTimeDebug('Temperature updated.')
+  })
 }
 
 const listenChangesInDate = ({
@@ -72,9 +91,12 @@ const listenChangesInDate = ({
       try {
         await saveClientData(z.coerce.number().parse(sensorId), data)
       } catch (error) {
-        console.error('Error: ', error)
+        realTimeDebug(`Error: ${error}`)
       }
-    else console.error('Error: No data found')
+    else
+      realTimeDebug(
+        `Error: The data for the sensor ${sensorId} was not found in the database.`
+      )
   })
 }
 
