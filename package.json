@@ -4,7 +4,7 @@
   "main": "src/index.ts",
   "description": "Backend for air-quality",
   "scripts": {
-    "lint": "eslint src/* --ext .ts",
+    "lint": "eslint src/* --ext .ts --fix",
     "service": "nodemon",
     "start": "DEBUG=AirQuality:* ts-node ./src/index",
     "release": "standard-version",
