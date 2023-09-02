@@ -22,6 +22,7 @@ type ClientPublishProps<T> = {
   moduleId: number
   sensorId: number
   topic: string
+  demo?: boolean
   cb?: () => void
 }
 
@@ -32,11 +33,12 @@ const clientPublish = <T>({
   moduleId,
   sensorId,
   topic,
+  demo = false,
   cb
 }: ClientPublishProps<T>) => {
   client.publish(
     `${MAIN_TOPIC}/${topic}`,
-    `${id}/${moduleId}/${sensorId}/${value}`
+    `${id}/${moduleId}/${sensorId}/${value}${demo ? '/demo' : ''}`
   )
   cb?.()
 }
@@ -50,7 +52,7 @@ const updateData = (client: MqttClient) => {
     return
   }
 
-  cron.schedule('*/10 * * * * *', async (): Promise<void> => {
+  cron.schedule('*/45 * * * * *', async (): Promise<void> => {
     pubDebug(`Job started at: ${new Date().toISOString()}`)
 
     for (const { id, moduleId, sensorId } of clients) {
@@ -95,7 +97,8 @@ const updateData = (client: MqttClient) => {
                         id,
                         moduleId,
                         sensorId,
-                        topic: 'date'
+                        topic: 'date',
+                        demo: true
                       })
                     }
                   })

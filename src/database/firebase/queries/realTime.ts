@@ -11,7 +11,8 @@ const clientData = z.object({
   aq: z.number(),
   h2s: z.number(),
   humidity: z.number(),
-  temperature: z.number()
+  temperature: z.number(),
+  demo: z.boolean().optional()
 })
 
 declare global {
@@ -24,6 +25,7 @@ type Update<T = number> = {
   moduleId: string
   sensorId: string
   value: T
+  demo?: boolean
 }
 
 const getData = async ({
@@ -43,7 +45,19 @@ const getData = async ({
   }
 }
 
-const updateDate = ({ db, id, moduleId, sensorId, value }: Update<string>) => {
+const updateDate = ({
+  db,
+  id,
+  moduleId,
+  sensorId,
+  value,
+  demo = false
+}: Update<string>) => {
+  if (demo)
+    db.ref(`/ids/${id}/${moduleId}/${sensorId}/demo`).set(true, error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+    })
+
   db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).set(value, error => {
     if (error) realTimeDebug(`Error: ${error}`)
     else realTimeDebug('Date updated.')
@@ -87,16 +101,27 @@ const listenChangesInDate = ({
   db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).on('value', async () => {
     const data = await getData({ db, id, moduleId, sensorId })
 
-    if (data)
+    if (data && !data.demo) {
       try {
         await saveClientData(z.coerce.number().parse(sensorId), data)
       } catch (error) {
         realTimeDebug(`Error: ${error}`)
       }
-    else
+
+      return
+    }
+
+    if (data && data.demo) {
       realTimeDebug(
-        `Error: The data for the sensor ${sensorId} was not found in the database.`
+        `The data for the sensor ${sensorId} was not saved because it is a demo.`
       )
+
+      return
+    }
+
+    realTimeDebug(
+      `Error: The data for the sensor ${sensorId} was not found in the database.`
+    )
   })
 }
 

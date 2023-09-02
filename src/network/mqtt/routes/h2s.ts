@@ -23,11 +23,10 @@ const sub = (client: MqttClient) => {
 
       if (floatValue === 0) return
 
-      subDebug(`Topic: ${topic} - Message received`)
+      subDebug(`Topic: ${topic} - Message received: ${message.toString()}`)
       subDebug(
         `Received a ${TOPIC.toUpperCase()} update at: ${new Date().toISOString()}`
       )
-      subDebug(`Message: \t${message}`)
       updateH2S({
         db,
         id,

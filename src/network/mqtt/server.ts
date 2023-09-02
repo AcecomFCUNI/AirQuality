@@ -1,12 +1,12 @@
-import mqtt from 'mqtt'
+import { connect, type IClientOptions, type MqttClient } from 'mqtt'
 import { Debugger } from 'debug'
 
 declare global {
   // eslint-disable-next-line no-var
-  var __mqttClient__: mqtt.MqttClient
+  var __mqttClient__: MqttClient
 }
 
-const options: mqtt.IClientOptions = {
+const options: IClientOptions = {
   port: process.env.MQTT_PORT ? parseInt(process.env.MQTT_PORT) : 0,
   host: process.env.MQTT_HOST,
   keepalive: 0,
@@ -19,7 +19,7 @@ const disconnectedMessage = 'Disconnected from MQTT server.'
 
 const getClient = (d?: Debugger) => {
   if (!global.__mqttClient__) {
-    global.__mqttClient__ = mqtt.connect(options)
+    global.__mqttClient__ = connect(options)
     global.__mqttClient__.on('connect', () => {
       d?.(connectedMessage)
     })
