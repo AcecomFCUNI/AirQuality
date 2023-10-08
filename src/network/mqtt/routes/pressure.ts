@@ -1,11 +1,11 @@
 import debug from 'debug'
 import { MqttClient } from 'mqtt'
 
-import { updateH2S } from 'database'
-import { MAIN_TOPIC } from 'utils'
 import { socketConnection } from 'network/socket'
+import { updatePressure } from 'database'
+import { MAIN_TOPIC } from 'utils'
 
-const TOPIC = 'h2s'
+const TOPIC = 'pressure'
 const SUB_TOPIC = `${MAIN_TOPIC}/${TOPIC}`
 
 const sub = (client: MqttClient) => {
@@ -27,21 +27,17 @@ const sub = (client: MqttClient) => {
       subDebug(
         `Received a ${TOPIC.toUpperCase()} update at: ${new Date().toISOString()}`
       )
-      updateH2S({
-        db,
-        id,
-        moduleId,
-        value: floatValue,
-        sensorId
-      })
-      socketConnection(subDebug).connect().emit(`${sensorId}/h2s`, floatValue)
+      updatePressure({ db, moduleId, id, value: floatValue, sensorId })
+      socketConnection(subDebug)
+        .connect()
+        .emit(`${sensorId}/pressure`, floatValue)
     }
   })
 }
 
-const temperature: Route = {
+const pH: Route = {
   sub,
   SUB_TOPIC
 }
 
-export { temperature }
+export { pH }

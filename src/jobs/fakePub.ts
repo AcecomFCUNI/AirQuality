@@ -69,11 +69,11 @@ const updateData = (client: MqttClient) => {
         cb: () => {
           clientPublish({
             client,
-            value: parseFloat(randomInInterval(200, 450)),
+            value: parseFloat(randomInInterval(500, 800)),
             id,
             moduleId,
             sensorId,
-            topic: 'h2s',
+            topic: 'co2',
             cb: () => {
               clientPublish({
                 client,
@@ -85,20 +85,40 @@ const updateData = (client: MqttClient) => {
                 cb: () => {
                   clientPublish({
                     client,
-                    value: randomInInterval(23, 27, 1),
+                    value: randomInInterval(40, 70),
                     id,
                     moduleId,
                     sensorId,
-                    topic: 'temperature',
+                    topic: 'pm2.5',
                     cb: () => {
                       clientPublish({
                         client,
-                        value: currentIsoTime,
+                        value: 998,
                         id,
                         moduleId,
                         sensorId,
-                        topic: 'date',
-                        demo: true
+                        topic: 'pressure',
+                        cb: () => {
+                          clientPublish({
+                            client,
+                            value: randomInInterval(23, 27, 1),
+                            id,
+                            moduleId,
+                            sensorId,
+                            topic: 'temperature',
+                            cb: () => {
+                              clientPublish({
+                                client,
+                                value: currentIsoTime,
+                                id,
+                                moduleId,
+                                sensorId,
+                                topic: 'date',
+                                demo: true
+                              })
+                            }
+                          })
+                        }
                       })
                     }
                   })

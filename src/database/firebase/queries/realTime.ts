@@ -9,10 +9,12 @@ const realTimeDebug = debug(`${MAIN_TOPIC}:Mqtt:FirebaseRealTime`)
 const clientData = z.object({
   date: z.string(),
   aq: z.number(),
-  h2s: z.number(),
+  co2: z.number(),
   humidity: z.number(),
+  pm2_5: z.number(),
+  pressure: z.number(),
   temperature: z.number(),
-  demo: z.boolean().optional()
+  demo: z.boolean().optional().default(false)
 })
 
 declare global {
@@ -71,10 +73,10 @@ const updateAQ = ({ db, id, moduleId, sensorId, value }: Update) => {
   })
 }
 
-const updateH2S = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/h2s`).set(value, error => {
+const updateCO2 = ({ db, id, moduleId, sensorId, value }: Update) => {
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/co2`).set(value, error => {
     if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('H2S updated.')
+    else realTimeDebug('CO2 updated.')
   })
 }
 
@@ -82,6 +84,21 @@ const updateHumidity = ({ db, id, moduleId, sensorId, value }: Update) => {
   db.ref(`/ids/${id}/${moduleId}/${sensorId}/humidity`).set(value, error => {
     if (error) realTimeDebug(`Error: ${error}`)
     else realTimeDebug('Humidity updated.')
+  })
+}
+
+// eslint-disable-next-line camelcase
+const updatePm2_5 = ({ db, id, moduleId, sensorId, value }: Update) => {
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/pm2_5`).set(value, error => {
+    if (error) realTimeDebug(`Error: ${error}`)
+    else realTimeDebug('Pm2.5 updated.')
+  })
+}
+
+const updatePressure = ({ db, id, moduleId, sensorId, value }: Update) => {
+  db.ref(`/ids/${id}/${moduleId}/${sensorId}/pressure`).set(value, error => {
+    if (error) realTimeDebug(`Error: ${error}`)
+    else realTimeDebug('Pressure updated.')
   })
 }
 
@@ -128,8 +145,11 @@ const listenChangesInDate = ({
 export {
   getData,
   updateAQ,
-  updateH2S,
+  updateCO2,
   updateHumidity,
+  // eslint-disable-next-line camelcase
+  updatePm2_5,
+  updatePressure,
   updateTemperature,
   updateDate,
   listenChangesInDate
