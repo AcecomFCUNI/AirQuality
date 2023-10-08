@@ -29,7 +29,7 @@ const sub = (client: MqttClient) => {
         `Received a ${TOPIC.toUpperCase()} update at: ${new Date().toISOString()}`
       )
       updateCO2({ db, moduleId, id, value: floatValue, sensorId })
-      socketConnection(subDebug).connect().emit(`${sensorId}/pm2.5`, floatValue)
+      socketConnection(subDebug).connect().emit(`${sensorId}/co2`, floatValue)
     }
   })
 }
