@@ -34,9 +34,11 @@ const sub = (client: MqttClient) => {
   })
 }
 
-const pH: Route = {
+// eslint-disable-next-line camelcase
+const pm2_5: Route = {
   sub,
   SUB_TOPIC
 }
 
-export { pH }
+// eslint-disable-next-line camelcase
+export { pm2_5 }

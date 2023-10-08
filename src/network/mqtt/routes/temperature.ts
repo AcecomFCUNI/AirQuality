@@ -41,9 +41,9 @@ const sub = (client: MqttClient) => {
   })
 }
 
-const turbidity: Route = {
+const temperature: Route = {
   sub,
   SUB_TOPIC
 }
 
-export { turbidity }
+export { temperature }

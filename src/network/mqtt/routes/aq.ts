@@ -33,9 +33,9 @@ const sub = (client: MqttClient) => {
   })
 }
 
-const pH: Route = {
+const aq: Route = {
   sub,
   SUB_TOPIC
 }
 
-export { pH }
+export { aq }
