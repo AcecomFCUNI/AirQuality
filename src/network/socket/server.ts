@@ -2,6 +2,8 @@ import { getData } from 'database'
 import { Debugger } from 'debug'
 import { Server } from 'socket.io'
 
+import * as routes from './routes'
+
 const PORT = parseInt(process.env.PORT as string) || 1996
 
 const socketConnection = (d: Debugger) => ({
@@ -42,6 +44,9 @@ const socketConnection = (d: Debugger) => ({
         const data = await getData({ db, id, moduleId, sensorId })
 
         socket.emit(`${sensorId}/initialData`, data)
+        ;(Object.keys(routes) as (keyof typeof routes)[]).forEach(route => {
+          routes[route]({ id, moduleId, sensorId }, global.__io__)
+        })
       })
 
       d(`Socket server started on port: ${PORT}.`)

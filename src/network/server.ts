@@ -9,10 +9,10 @@ const namespace = `${MAIN_TOPIC}:Mqtt:Server`
 const serverDebug = debug(namespace)
 
 const start = async () => {
-  firebaseConnection(serverDebug, async () => {
+  await firebaseConnection(serverDebug, async () => {
+    startMqtt(serverDebug)
     socketConnection(serverDebug).connect()
     await dbConnection(serverDebug).connect()
-    startMqtt(serverDebug)
   })
 
   const jobs = await import('../jobs')
