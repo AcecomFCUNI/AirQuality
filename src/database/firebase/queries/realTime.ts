@@ -136,7 +136,7 @@ const listenChangesInDate = ({
       return
     }
 
-    if (data && data.demo) {
+    if (data?.demo) {
       realTimeDebug(
         `The data for the sensor ${sensorId} was not saved because it is a demo.`
       )
