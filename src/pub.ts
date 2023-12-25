@@ -10,6 +10,10 @@ client.on('error', error => {
   pubDebug('Error: ', error)
 })
 
-client.publish(`${MAIN_TOPIC}/electricConductivity`, 'wea', () => {
-  pubDebug('Message send')
-})
+client.publish(
+  `${MAIN_TOPIC}/takePhoto`,
+  'Wp82DjwYQVhhLzm3eYomosZTWSq1/1/1',
+  () => {
+    pubDebug('Message send')
+  }
+)
