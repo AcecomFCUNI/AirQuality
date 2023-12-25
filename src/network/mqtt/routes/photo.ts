@@ -4,7 +4,8 @@ import { z } from 'zod'
 
 import { socketConnection } from 'network/socket'
 import { MAIN_TOPIC } from 'utils'
-// import { writeFile } from 'fs/promises'
+
+import { writeFile } from 'fs/promises'
 
 const TOPIC = 'receivePhoto'
 const SUB_TOPIC = `${MAIN_TOPIC}/${TOPIC}`
@@ -42,15 +43,19 @@ const sub = (client: MqttClient) => {
       }
 
       const { data } = messageValidation
-      // const base64 = data.base64.split(';base64,').pop()
 
-      // if (!base64) return
+      if (process.env.NODE_ENV === 'local') {
+        const base64 = data.base64.split(';base64,').pop()
 
-      // const buffer = Buffer.from(base64, 'base64')
-      // // save the base64 as a file
-      // writeFile(`./${data.meta.timestamp}.jpeg`, buffer).then(() => {
-      //   subDebug('File saved')
-      // })
+        if (!base64) return
+
+        const buffer = Buffer.from(base64, 'base64')
+        // save the base64 as a file
+        writeFile(`./${data.meta.timestamp}.jpeg`, buffer).then(() => {
+          subDebug('File saved')
+        })
+      }
+
       const {
         meta: { sensorId }
       } = data

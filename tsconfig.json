@@ -8,7 +8,8 @@
     "test",
     "tests",
     "__test__",
-    "dist"
+    "dist",
+    "scripts"
   ],
   "include": [
     "src"

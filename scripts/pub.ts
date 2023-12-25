@@ -1,7 +1,7 @@
 import debug from 'debug'
 
-import { MAIN_TOPIC } from 'utils'
-import { getClient } from './network/mqtt'
+import { MAIN_TOPIC } from '../src/utils'
+import { getClient } from '../src/network/mqtt'
 
 const pubDebug = debug(`${MAIN_TOPIC}:Mqtt:demo:pub`)
 const client = getClient()
