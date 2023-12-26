@@ -44,7 +44,7 @@ const getData = async ({
     return value
   } catch (error) {
     realTimeDebug(
-      `Error validation for: ${JSON.stringify({
+      `getData - Error validation for: ${JSON.stringify({
         id,
         moduleId,
         sensorId
