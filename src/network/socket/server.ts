@@ -45,7 +45,8 @@ const socketConnection = (d: Debugger) => ({
 
         socket.emit(`${sensorId}/initialData`, data)
         ;(Object.keys(routes) as (keyof typeof routes)[]).forEach(route => {
-          routes[route]({ id, moduleId, sensorId }, global.__io__)
+          d(`Applying route: ${route} for ${id}/${moduleId}/${sensorId}`)
+          routes[route]({ id, moduleId, sensorId }, socket)
         })
       })
 
