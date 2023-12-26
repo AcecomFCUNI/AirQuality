@@ -45,25 +45,48 @@ model Sensor {
   updatedAt DateTime? @default(now()) @db.Timestamptz(6)
   deletedAt DateTime? @db.Timestamptz(6)
 
-  Module     Module       @relation(fields: [moduleId], references: [id])
+  Devices    Device[]
   SensorData SensorData[]
+  Module     Module       @relation(fields: [moduleId], references: [id])
 
   @@map("sensors")
 }
 
 model SensorData {
-  id          Int   @id @default(autoincrement())
-  sensorId    Int
-  aq          Float
-  co2         Float
-  humidity    Float
-  pm2_5       Float
-  pressure    Float
-  temperature Float
+  id       Int @id @default(autoincrement())
+  sensorId Int
 
   createdAt DateTime? @default(now()) @db.Timestamptz(6)
+
+  aq          Float @default(0)
+  h2s         Float @default(0)
+  humidity    Float @default(0)
+  co2         Float @default(0)
+  pm2_5       Float @default(0)
+  pressure    Float @default(0)
+  temperature Float @default(0)
 
   Sensor Sensor @relation(fields: [sensorId], references: [id])
 
   @@map("sensorData")
+}
+
+model Device {
+  id       Int          @id @default(autoincrement())
+  sensorId Int
+  name     String       @db.VarChar(255)
+  status   DeviceStatus @default(OFF)
+
+  createdAt DateTime? @default(now()) @db.Timestamptz(6)
+  updatedAt DateTime? @default(now()) @db.Timestamptz(6)
+  deletedAt DateTime? @db.Timestamptz(6)
+
+  Sensor Sensor @relation(fields: [sensorId], references: [id])
+
+  @@map("devices")
+}
+
+enum DeviceStatus {
+  ON
+  OFF
 }
