@@ -9,4 +9,5 @@ type FirebaseConfig = {
   project_id: string
   token_uri: string
   type: string
+  universe_domain: string
 }

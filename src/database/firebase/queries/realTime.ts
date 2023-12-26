@@ -36,7 +36,9 @@ const getData = async ({
   moduleId,
   sensorId
 }: Omit<Update, 'value'>) => {
-  const result = await db.ref(`/ids/${id}/${moduleId}/${sensorId}`).get()
+  const result = await db
+    .ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}`)
+    .get()
 
   try {
     const value = clientData.parse(result.val())
@@ -64,57 +66,81 @@ const updateDate = ({
   demo = false
 }: Update<string>) => {
   if (demo)
-    db.ref(`/ids/${id}/${moduleId}/${sensorId}/demo`).set(true, error => {
-      if (error) realTimeDebug(`Error: ${error}`)
-    })
+    db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/demo`).set(
+      true,
+      error => {
+        if (error) realTimeDebug(`Error: ${error}`)
+      }
+    )
 
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).set(value, error => {
-    if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('Date updated.')
-  })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/date`).set(
+    value,
+    error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+      else realTimeDebug('Date updated.')
+    }
+  )
 }
 
 const updateAQ = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/aq`).set(value, error => {
-    if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('AQ updated.')
-  })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/aq`).set(
+    value,
+    error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+      else realTimeDebug('AQ updated.')
+    }
+  )
 }
 
 const updateCO2 = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/co2`).set(value, error => {
-    if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('CO2 updated.')
-  })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/co2`).set(
+    value,
+    error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+      else realTimeDebug('CO2 updated.')
+    }
+  )
 }
 
 const updateHumidity = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/humidity`).set(value, error => {
-    if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('Humidity updated.')
-  })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/humidity`).set(
+    value,
+    error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+      else realTimeDebug('Humidity updated.')
+    }
+  )
 }
 
 // eslint-disable-next-line camelcase
 const updatePm2_5 = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/pm2_5`).set(value, error => {
-    if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('Pm2.5 updated.')
-  })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/pm2_5`).set(
+    value,
+    error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+      else realTimeDebug('Pm2.5 updated.')
+    }
+  )
 }
 
 const updatePressure = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/pressure`).set(value, error => {
-    if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('Pressure updated.')
-  })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/pressure`).set(
+    value,
+    error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+      else realTimeDebug('Pressure updated.')
+    }
+  )
 }
 
 const updateTemperature = ({ db, id, moduleId, sensorId, value }: Update) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/temperature`).set(value, error => {
-    if (error) realTimeDebug(`Error: ${error}`)
-    else realTimeDebug('Temperature updated.')
-  })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/temperature`).set(
+    value,
+    error => {
+      if (error) realTimeDebug(`Error: ${error}`)
+      else realTimeDebug('Temperature updated.')
+    }
+  )
 }
 
 const listenChangesInDate = ({
@@ -123,31 +149,34 @@ const listenChangesInDate = ({
   moduleId,
   sensorId
 }: Omit<Update, 'value'>) => {
-  db.ref(`/ids/${id}/${moduleId}/${sensorId}/date`).on('value', async () => {
-    const data = await getData({ db, id, moduleId, sensorId })
+  db.ref(`/${MAIN_TOPIC}/${id}/${moduleId}/${sensorId}/date`).on(
+    'value',
+    async () => {
+      const data = await getData({ db, id, moduleId, sensorId })
 
-    if (data && !data.demo) {
-      try {
-        await saveClientData(z.coerce.number().parse(sensorId), data)
-      } catch (error) {
-        realTimeDebug(`Error: ${error}`)
+      if (data && !data.demo) {
+        try {
+          await saveClientData(z.coerce.number().parse(sensorId), data)
+        } catch (error) {
+          realTimeDebug(`Error: ${error}`)
+        }
+
+        return
       }
 
-      return
-    }
+      if (data?.demo) {
+        realTimeDebug(
+          `The data for the sensor ${sensorId} was not saved because it is a demo.`
+        )
 
-    if (data?.demo) {
+        return
+      }
+
       realTimeDebug(
-        `The data for the sensor ${sensorId} was not saved because it is a demo.`
+        `Error: The data for the sensor ${sensorId} was not found in the database.`
       )
-
-      return
     }
-
-    realTimeDebug(
-      `Error: The data for the sensor ${sensorId} was not found in the database.`
-    )
-  })
+  )
 }
 
 export {

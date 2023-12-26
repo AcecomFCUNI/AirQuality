@@ -19,7 +19,8 @@ const firebaseConfig: FirebaseConfig = {
   private_key_id: process.env.FIREBASE_PRIVATE_KEY_ID as string,
   project_id: process.env.FIREBASE_PROJECT_ID as string,
   token_uri: process.env.FIREBASE_TOKEN_URI as string,
-  type: process.env.FIREBASE_TYPE as string
+  type: process.env.FIREBASE_TYPE as string,
+  universe_domain: process.env.FIREBASE_UNIVERSE_DOMAIN as string
 }
 
 const firebaseConnection = async (
