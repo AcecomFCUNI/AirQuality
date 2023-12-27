@@ -8,13 +8,19 @@ import { updateDevices as ud } from 'database'
 const realTimeDebug = debug(`${MAIN_TOPIC}:WebSockets:updateDevices`)
 
 const updateDevices = (sensorData: SensorData, socket: Socket) => {
-  const { sensorId } = sensorData
+  const { id: clientId, sensorId } = sensorData
 
   realTimeDebug(`Creating route: "${sensorId}/updateDevices"`)
 
   socket.on(`${sensorId}/updateDevices`, (message: Device[]) => {
     ud(message)
       .then(() => {
+        message.forEach(({ id, status }) => {
+          __mqttClient__.publish(
+            `${MAIN_TOPIC}/toggleDevice`,
+            `${clientId}/${sensorId}/${id}/${status}`
+          )
+        })
         socket.emit(`${sensorId}/updatedDevices`, true)
       })
       .catch(error => {
