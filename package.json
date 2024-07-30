@@ -10,7 +10,8 @@
     "release": "standard-version",
     "test:local": "jest --setupFiles dotenv/config --ci -i",
     "test:ci": "jest --ci -i",
-    "pub": "nodemon --exec \"DEBUG=WQ:* ts-node -r dotenv/config scripts/pub.ts\""
+    "pub": "nodemon --exec \"DEBUG=WQ:* ts-node -r dotenv/config scripts/pub.ts\"",
+    "postinstall": "prisma generate"
   },
   "author": "AnthonyLzq <sluzquinosa@uni.pe>",
   "license": "MIT",
