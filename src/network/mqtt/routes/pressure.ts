@@ -36,6 +36,7 @@ const sub = (client: MqttClient) => {
 }
 
 const pressure: Route = {
+  type: 'mqtt',
   sub,
   SUB_TOPIC
 }

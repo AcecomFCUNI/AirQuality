@@ -42,6 +42,7 @@ const sub = (client: MqttClient) => {
 }
 
 const temperature: Route = {
+  type: 'mqtt',
   sub,
   SUB_TOPIC
 }

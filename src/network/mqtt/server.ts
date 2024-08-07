@@ -1,6 +1,6 @@
 import { connect, type IClientOptions, type MqttClient } from 'mqtt'
 import { Debugger } from 'debug'
-
+import fastify from 'fastify'
 declare global {
   // eslint-disable-next-line no-var
   var __mqttClient__: MqttClient
@@ -36,8 +36,9 @@ const getClient = (d?: Debugger) => {
 
 const start = async (d: Debugger) => {
   const { applyRoutes } = await import('./router')
-
-  applyRoutes(getClient(d))
+  const app = fastify()
+  // updateSimulationTime(app)
+  applyRoutes(getClient(d), app)
 }
 
 const stop = async () => {

@@ -45,6 +45,7 @@ const sub = (client: MqttClient) => {
 }
 
 const date: Route = {
+  type: 'mqtt',
   sub,
   SUB_TOPIC
 }

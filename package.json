@@ -50,6 +50,7 @@
   "dependencies": {
     "@prisma/client": "5.2.0",
     "debug": "4.3.4",
+    "fastify": "^4.28.1",
     "firebase-admin": "11.10.1",
     "mqtt": "5.0.4",
     "node-cron": "3.0.2",

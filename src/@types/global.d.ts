@@ -1,6 +1,7 @@
+/* eslint-disable no-var */
 declare global {
-  // eslint-disable-next-line no-var
   var __io__: import('socket.io').Server
+  var __SIMULATION_TIME__: number
 }
 
 export {}

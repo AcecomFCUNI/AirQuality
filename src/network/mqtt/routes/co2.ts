@@ -35,6 +35,7 @@ const sub = (client: MqttClient) => {
 }
 
 const co2: Route = {
+  type: 'mqtt',
   sub,
   SUB_TOPIC
 }

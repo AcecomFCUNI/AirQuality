@@ -36,6 +36,7 @@ const sub = (client: MqttClient) => {
 
 // eslint-disable-next-line camelcase
 const pm2_5: Route = {
+  type: 'mqtt',
   sub,
   SUB_TOPIC
 }

@@ -41,6 +41,8 @@ const clientPublish = <T>({
   cb?.()
 }
 
+global.__SIMULATION_TIME__ = 10
+
 const updateData = (client: MqttClient) => {
   const pubDebug = debug(`${MAIN_TOPIC}:Mqtt:demo:pub`)
 
@@ -50,83 +52,86 @@ const updateData = (client: MqttClient) => {
     return
   }
 
-  cron.schedule('*/30 * * * * *', async (): Promise<void> => {
-    pubDebug(`Job started at: ${new Date().toISOString()}`)
+  cron.schedule(
+    `*/${global.__SIMULATION_TIME__} * * * * *`,
+    async (): Promise<void> => {
+      pubDebug(`Job started at: ${new Date().toISOString()}`)
 
-    const { id, moduleId, sensorId } = DEMO_CLIENT
-    const currentIsoTime = new Date().toISOString()
+      const { id, moduleId, sensorId } = DEMO_CLIENT
+      const currentIsoTime = new Date().toISOString()
 
-    pubDebug(`Publishing messages at: ${currentIsoTime}`)
-    clientPublish({
-      client,
-      value: randomInInterval(200, 450),
-      id,
-      moduleId,
-      sensorId,
-      topic: 'aq',
-      cb: () => {
-        clientPublish({
-          client,
-          value: parseFloat(randomInInterval(500, 800)),
-          id,
-          moduleId,
-          sensorId,
-          topic: 'co2',
-          cb: () => {
-            clientPublish({
-              client,
-              value: randomInInterval(1, 20),
-              id,
-              moduleId,
-              sensorId,
-              topic: 'humidity',
-              cb: () => {
-                clientPublish({
-                  client,
-                  value: randomInInterval(40, 70),
-                  id,
-                  moduleId,
-                  sensorId,
-                  topic: 'pm2.5',
-                  cb: () => {
-                    clientPublish({
-                      client,
-                      value: 998,
-                      id,
-                      moduleId,
-                      sensorId,
-                      topic: 'pressure',
-                      cb: () => {
-                        clientPublish({
-                          client,
-                          value: randomInInterval(23, 27, 1),
-                          id,
-                          moduleId,
-                          sensorId,
-                          topic: 'temperature',
-                          cb: () => {
-                            clientPublish({
-                              client,
-                              value: currentIsoTime,
-                              id,
-                              moduleId,
-                              sensorId,
-                              topic: 'date',
-                              demo: true
-                            })
-                          }
-                        })
-                      }
-                    })
-                  }
-                })
-              }
-            })
-          }
-        })
-      }
-    })
-  })
+      pubDebug(`Publishing messages at: ${currentIsoTime}`)
+      clientPublish({
+        client,
+        value: randomInInterval(200, 450),
+        id,
+        moduleId,
+        sensorId,
+        topic: 'aq',
+        cb: () => {
+          clientPublish({
+            client,
+            value: parseFloat(randomInInterval(500, 800)),
+            id,
+            moduleId,
+            sensorId,
+            topic: 'co2',
+            cb: () => {
+              clientPublish({
+                client,
+                value: randomInInterval(1, 20),
+                id,
+                moduleId,
+                sensorId,
+                topic: 'humidity',
+                cb: () => {
+                  clientPublish({
+                    client,
+                    value: randomInInterval(40, 70),
+                    id,
+                    moduleId,
+                    sensorId,
+                    topic: 'pm2.5',
+                    cb: () => {
+                      clientPublish({
+                        client,
+                        value: 998,
+                        id,
+                        moduleId,
+                        sensorId,
+                        topic: 'pressure',
+                        cb: () => {
+                          clientPublish({
+                            client,
+                            value: randomInInterval(23, 27, 1),
+                            id,
+                            moduleId,
+                            sensorId,
+                            topic: 'temperature',
+                            cb: () => {
+                              clientPublish({
+                                client,
+                                value: currentIsoTime,
+                                id,
+                                moduleId,
+                                sensorId,
+                                topic: 'date',
+                                demo: true
+                              })
+                            }
+                          })
+                        }
+                      })
+                    }
+                  })
+                }
+              })
+            }
+          })
+        }
+      })
+    }
+  )
 }
 
 export { updateData }

@@ -67,6 +67,7 @@ const sub = (client: MqttClient) => {
 }
 
 const receivePhoto: Route = {
+  type: 'mqtt',
   sub,
   SUB_TOPIC
 }
