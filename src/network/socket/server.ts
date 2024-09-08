@@ -54,6 +54,7 @@ const socketConnection = (d: Debugger) => ({
       })
 
       d(`Socket server started on port: ${PORT}.`)
+      d(`Origins allowed: ${ORIGIN}`)
     }
 
     return global.__io__
